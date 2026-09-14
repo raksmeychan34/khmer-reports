@@ -33,7 +33,7 @@
             <h4 class="text-center"><strong><span>PURCHASE ORDER</span></strong></h4>
 
             <div class="row">
-                <div class="col-7">
+                <div class="col-6">
                     <div class="row">
                         <div class="col-4"><div class="erp-text">PO No.</div></div>
                         <div class="col-8"><div class="erp-text">: <span t-field="o.name"/></div></div>
@@ -41,6 +41,11 @@
                     <div class="row">
                         <div class="col-4"><div class="erp-text">Supplier</div></div>
                         <div class="col-8"><div class="erp-text">: <span t-esc="o.partner_id.name"/></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><div class="erp-text">Attn</div></div>
+                        <!-- No dedicated "attention contact" field on purchase.order yet; left blank until one is added -->
+                        <div class="col-8"><div class="erp-text">: </div></div>
                     </div>
                     <div class="row">
                         <div class="col-4"><div class="erp-text">Address</div></div>
@@ -55,12 +60,40 @@
                         <div class="col-8"><div class="erp-text">: <span t-esc="o.payment_term_id.name"/></div></div>
                     </div>
                 </div>
-                <div class="col-5">
+                <div class="col-6">
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Quote No.</div></div>
+                        <!-- Uses the Vendor Reference field as the quote/quotation number -->
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.partner_ref"/></div></div>
+                    </div>
                     <div class="row">
                         <div class="col-5"><div class="erp-text">Date</div></div>
                         <div class="col-7"><div class="erp-text">: <span t-esc="o.date_order" t-options="{'widget': 'date', 'format': 'dd-MM-yyyy'}"/></div></div>
                     </div>
-                    <!-- Project Name / Project Code / MR No. / Requester: still pending confirmation on purchase.order -->
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Project Name</div></div>
+                        <!-- Pending: no project field on purchase.order yet -->
+                        <div class="col-7"><div class="erp-text">: </div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Project Code</div></div>
+                        <!-- Pending: no project field on purchase.order yet -->
+                        <div class="col-7"><div class="erp-text">: </div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">VAT No.</div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.company_id.vat"/></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">MR No.</div></div>
+                        <!-- Pending: no material-request reference field on purchase.order yet -->
+                        <div class="col-7"><div class="erp-text">: </div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Requester</div></div>
+                        <!-- Pending: no requester field on purchase.order yet -->
+                        <div class="col-7"><div class="erp-text">: </div></div>
+                    </div>
                 </div>
             </div>
 
@@ -68,12 +101,13 @@
                 <thead>
                     <tr class="erp-border">
                         <th class="text-center erp-text erp-border erp-table-header" style="width:5%">No.</th>
-                        <th class="text-center erp-text erp-border erp-table-header" style="width:15%">Item Code</th>
-                        <th class="text-center erp-text erp-border erp-table-header" style="width:25%">Item Name</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:13%">Item Code</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:20%">Item Name</th>
                         <th class="text-center erp-text erp-border erp-table-header" style="width:20%">Description</th>
-                        <th class="text-center erp-text erp-border erp-table-header" style="width:10%">QTY</th>
-                        <th class="text-center erp-text erp-border erp-table-header" style="width:10%">Unit Price</th>
-                        <th class="text-center erp-text erp-border erp-table-header" style="width:15%">Amount</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:8%">QTY</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:8%">UoM</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:12%">Unit Price</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:14%">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,31 +118,60 @@
                             <td class="erp-text erp-border"><span t-field="line.product_id.name"/></td>
                             <td class="erp-text erp-border"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_qty"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_uom"/></td>
                             <td class="erp-right erp-text erp-border"><span t-field="line.price_unit"/></td>
                             <td class="erp-right erp-text erp-border"><span t-field="line.price_subtotal"/></td>
                         </tr>
                     </t>
                 </tbody>
-                <tfoot>
-                    <tr class="erp-border">
-                        <th colspan="6" class="text-end erp-text erp-border">Total Amount</th>
-                        <th class="erp-right erp-text erp-border"><span t-field="o.amount_total"/></th>
-                    </tr>
-                </tfoot>
             </table>
+
+            <div class="row" style="margin-top: 4px;">
+                <div class="col-8">
+                    <div class="erp-text" style="border: 1px solid black; padding: 6px; height: 100%;">
+                        <strong>Amount in word:</strong>
+                        <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <table class="table table-sm" style="margin-bottom: 0;">
+                        <tr class="erp-border">
+                            <td class="erp-text erp-border"><strong>Total Amount</strong></td>
+                            <td class="erp-text erp-border text-end"><span t-field="o.amount_total"/></td>
+                        </tr>
+                        <tr class="erp-border">
+                            <td class="erp-text erp-border"><strong>Discount</strong></td>
+                            <!-- purchase.order has no header-level discount field; shown as 0.00 -->
+                            <td class="erp-text erp-border text-end">
+                                <span t-esc="0.0" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                            </td>
+                        </tr>
+                        <tr class="erp-border">
+                            <td class="erp-text erp-border"><strong>PO Amount</strong></td>
+                            <td class="erp-text erp-border text-end"><span t-field="o.amount_total"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
             <div class="row" style="margin-top: 60px;">
                 <div class="col-4">
                     <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
                     <div class="erp-text text-center">Prepared by</div>
+                    <div class="erp-text">Name: <span t-esc="o.user_id.name"/></div>
+                    <div class="erp-text">Date: <span t-esc="o.date_order" t-options="{'widget': 'date', 'format': 'dd-MM-yyyy'}"/></div>
                 </div>
                 <div class="col-4">
                     <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
                     <div class="erp-text text-center">Checked by</div>
+                    <div class="erp-text">Name: </div>
+                    <div class="erp-text">Date: </div>
                 </div>
                 <div class="col-4">
                     <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
                     <div class="erp-text text-center">Approved by</div>
+                    <div class="erp-text">Name: </div>
+                    <div class="erp-text">Date: </div>
                 </div>
             </div>
         </div>

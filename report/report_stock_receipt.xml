@@ -5,8 +5,8 @@
         <field name="name">Goods Receive Note (Khmer - With Header)</field>
         <field name="model">stock.picking</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">erp_report_khmer_documents.report_stock_receipt_header</field>
-        <field name="report_file">erp_report_khmer_documents.report_stock_receipt_header</field>
+        <field name="report_name">khmer_reports.report_stock_receipt_header</field>
+        <field name="report_file">khmer_reports.report_stock_receipt_header</field>
         <field name="print_report_name">'Goods Receive Note - %s' % (object.name)</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
@@ -16,13 +16,16 @@
         <field name="name">Goods Receive Note (Khmer - No Header)</field>
         <field name="model">stock.picking</field>
         <field name="report_type">qweb-pdf</field>
-        <field name="report_name">erp_report_khmer_documents.report_stock_receipt_no_header</field>
-        <field name="report_file">erp_report_khmer_documents.report_stock_receipt_no_header</field>
+        <field name="report_name">khmer_reports.report_stock_receipt_no_header</field>
+        <field name="report_file">khmer_reports.report_stock_receipt_no_header</field>
         <field name="print_report_name">'Goods Receive Note - %s' % (object.name)</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
 
+    <!-- Shared content — used by both wrappers below. NOTE: no font-face, no company
+         header block here anymore — that's handled per-wrapper now, since the
+         with-header layout renders its own header and would duplicate it. -->
     <template id="report_stock_receipt_document">
         <div class="page">
             <br/>
@@ -74,7 +77,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <t t-foreach="o.move_ids_without_package" t-as="line">
+                    <t t-foreach="o.move_ids" t-as="line">
                         <tr class="erp-border">
                             <td class="erp-center erp-text erp-border"><t t-esc="line_index + 1"/></td>
                             <td class="erp-text erp-border"><span t-field="line.product_id.default_code"/></td>
@@ -89,70 +92,78 @@
                         </tr>
                     </t>
                 </tbody>
+                <tfoot>
+                    <tr class="erp-border">
+                        <th colspan="5" class="text-end erp-text erp-border">Total</th>
+                        <th class="erp-center erp-text erp-border"><span t-esc="sum(l.quantity for l in o.move_ids)"/></th>
+                        <th class="erp-border"></th>
+                        <th class="erp-right erp-text erp-border">
+                            <span t-esc="sum(l.quantity * l.purchase_line_id.price_unit for l in o.move_ids)" t-options="{'widget': 'monetary', 'display_currency': o.company_id.currency_id}"/>
+                        </th>
+                    </tr>
+                </tfoot>
             </table>
 
             <div class="row" style="margin-top: 60px;">
                 <div class="col-4">
                     <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
                     <div class="erp-text text-center">Prepared by</div>
+                    <div class="erp-text">Name: </div>
+                    <div class="erp-text">Date: </div>
                 </div>
                 <div class="col-4">
                     <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
                     <div class="erp-text text-center">Checked by</div>
+                    <div class="erp-text">Name: </div>
+                    <div class="erp-text">Date: </div>
                 </div>
                 <div class="col-4">
                     <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
                     <div class="erp-text text-center">Received by</div>
+                    <div class="erp-text">Name: </div>
+                    <div class="erp-text">Date: </div>
                 </div>
             </div>
         </div>
     </template>
 
+    <!-- Wrapper 1: WITH header — external_layout_template_center already draws the
+         full company header itself, so we do NOT add our own header block here. -->
     <template id="report_stock_receipt_header">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-set="display_header" t-value="True"/>
                 <t t-set="display_footer" t-value="True"/>
-                <link rel="stylesheet" href="/erp_report_khmer_documents/static/src/css/erp_external_layout.scss"/>
+                <link rel="stylesheet" href="/report_layout_template/static/src/css/font.css"/>
                 <t t-if="not company">
                     <t t-if="company_id"><t t-set="company" t-value="company_id"/></t>
                     <t t-elif="o and 'company_id' in o and o.company_id.sudo()"><t t-set="company" t-value="o.company_id.sudo()"/></t>
                     <t t-else="else"><t t-set="company" t-value="res_company"/></t>
                 </t>
-                <t t-call="erp_report_layout.external_layout_erp_cambodia">
-                    <style>
-                        .erp-title { font-size: 20px; font-family: Moul; padding-bottom: 3px; font-weight: bold; }
-                        .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
-                        .erp-title-en { font-size: 18px; }
-                    </style>
-                    <div class="row mb8">
-                        <div class="col-4 mb2">
-                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="max-height: 150px; margin-top:10px;"/>
-                        </div>
-                        <div class="col-8 mb6" style="margin-top:10px;">
-                            <h3 class="mt0 erp-title text-left" t-field="company.khmer_name"/>
-                            <h4 class="mt0 text-left erp-title-en" t-field="company.name"/>
-                        </div>
-                    </div>
-                    <div style="border-bottom: 1px solid black;"/>
-                    <t t-call="erp_report_khmer_documents.report_stock_receipt_document"/>
+                <style>
+                    .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
+                </style>
+                <t t-call="report_layout_template.external_layout_template_center">
+                    <t t-call="khmer_reports.report_stock_receipt_document"/>
                 </t>
             </t>
         </t>
     </template>
 
+    <!-- Wrapper 2: NO header — this layout's header is intentionally blank, so we
+         draw our own compact letterhead block before handing off to the document. -->
     <template id="report_stock_receipt_no_header">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-set="display_header" t-value="True"/>
                 <t t-set="display_footer" t-value="True"/>
-                <link rel="stylesheet" href="/erp_report_khmer_documents/static/src/css/erp_external_layout.scss"/>
+                <link rel="stylesheet" href="/report_layout_template/static/src/css/font.css"/>
                 <t t-if="not company">
                     <t t-if="company_id"><t t-set="company" t-value="company_id"/></t>
                     <t t-elif="o and 'company_id' in o and o.company_id.sudo()"><t t-set="company" t-value="o.company_id.sudo()"/></t>
                     <t t-else="else"><t t-set="company" t-value="res_company"/></t>
                 </t>
-                <t t-call="erp_report_layout.external_layout_erp_cambodia_no_head">
+                <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
                     <style>
                         .erp-title { font-size: 20px; font-family: Moul; padding-bottom: 3px; font-weight: bold; }
                         .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
@@ -163,12 +174,12 @@
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="max-height: 150px; margin-top:10px;"/>
                         </div>
                         <div class="col-8 mb6" style="margin-top:10px;">
-                            <h3 class="mt0 erp-title text-left" t-field="company.khmer_name"/>
+                            <h3 class="mt0 erp-title text-left" t-field="company.kh_name"/>
                             <h4 class="mt0 text-left erp-title-en" t-field="company.name"/>
                         </div>
                     </div>
                     <div style="border-bottom: 1px solid black;"/>
-                    <t t-call="erp_report_khmer_documents.report_stock_receipt_document"/>
+                    <t t-call="khmer_reports.report_stock_receipt_document"/>
                 </t>
             </t>
         </t>
