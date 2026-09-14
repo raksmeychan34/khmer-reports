@@ -10,6 +10,7 @@
     "category": "Purchase/Localizations and Inventory/Localizations",
     "depends": ["purchase", "stock", "purchase_request", "report_layout_template"],
     "data": [
+        "report/report_paperformat.xml",
         'report/report_purchase_request.xml',
         'report/report_purchase_order.xml',
         'report/report_stock_receipt.xml',

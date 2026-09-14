@@ -23,9 +23,6 @@
         <field name="binding_type">report</field>
     </record>
 
-    <!-- Shared content — used by both wrappers below. NOTE: no font-face, no company
-         header block here anymore — that's handled per-wrapper now, since the
-         with-header layout renders its own header and would duplicate it. -->
     <template id="report_purchase_request_document">
         <div class="page">
             <br/>
@@ -42,7 +39,6 @@
                         <div class="col-4"><div class="erp-text">Requester</div></div>
                         <div class="col-8"><div class="erp-text">: <span t-esc="o.requested_by.name"/></div></div>
                     </div>
-                    <!-- Project Name / Project Code: not in the purchase.request module, see Part 1 -->
                 </div>
                 <div class="col-5">
                     <div class="row">
@@ -77,14 +73,12 @@
                     <t t-foreach="o.line_ids" t-as="line">
                         <tr class="erp-border">
                             <td class="erp-center erp-text erp-border"><t t-esc="line_index + 1"/></td>
-                            <td class="erp-text erp-border"><span t-field="line.product_id.default_code"/></td>
-                            <td class="erp-text erp-border"><span t-field="line.product_id.name"/></td>
-                            <td class="erp-text erp-border"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_id.default_code"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_id.name"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_qty"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_uom_id"/></td>
-                            <!-- purchase.request.line only stores a total estimated_cost, no separate unit price field,
-                                 so unit price is derived here for display purposes only -->
-                            <td class="erp-right erp-text erp-border">
+                            <td class="erp-center erp-text erp-border">
                                 <span t-esc="(line.estimated_cost / line.product_qty) if line.product_qty else 0.0" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
                             </td>
                             <td class="erp-right erp-text erp-border"><span t-field="line.estimated_cost"/></td>
@@ -102,25 +96,51 @@
                 </tfoot>
             </table>
 
-            <div class="row" style="margin-top: 60px;">
+            <div class="row" style="margin-top: 20px;">
                 <div class="col-6">
-                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
-                    <div class="erp-text text-center">Prepared by</div>
-                    <div class="erp-text">Name: <span t-esc="o.requested_by.name"/></div>
-                    <div class="erp-text">Date: <span t-esc="o.date_start" t-options="{'widget': 'date', 'format': 'yyyy-MM-dd'}"/></div>
+                    <div class="erp-border" style="padding: 8px; min-height: 130px;">
+                        <div class="erp-text text-center"><strong>Prepared by</strong></div>
+                        <div style="height: 80px;"/>
+                        <div class="erp-text">Name: <span t-esc="o.requested_by.name"/></div>
+                        <div class="erp-text">Date: <span t-esc="o.date_start" t-options="{'widget': 'date', 'format': 'yyyy-MM-dd'}"/></div>
+                    </div>
                 </div>
                 <div class="col-6">
-                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
-                    <div class="erp-text text-center">Checked And Approved by</div>
-                    <div class="erp-text">Name: <span t-esc="o.assigned_to.name"/></div>
-                    <div class="erp-text">Date: </div>
+                    <div class="erp-border" style="padding: 8px; min-height: 130px;">
+                        <div class="erp-text text-center"><strong>Checked And Approved by</strong></div>
+                        <div style="height: 80px;"/>
+                        <div class="erp-text">Name: <span t-esc="o.assigned_to.name"/></div>
+                        <div class="erp-text">Date: </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; border-top: 1px solid black; padding-top: 6px;">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="erp-text"><strong>ADDRESS</strong></div>
+                        <div class="erp-text">
+                            <span t-esc="company.city"/><t t-if="company.city and company.country_id">,</t>
+                            <span t-esc="company.country_id.name"/>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="erp-text"><strong>CONTACT</strong></div>
+                        <div class="erp-text">T. <span t-esc="company.phone"/></div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 8px;">
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/design_build.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/electrical.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/mechanical.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/water_systems.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/fire_security.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/maintenance_warranty.png" style="width:100%; max-width:70px;"/></div>
                 </div>
             </div>
         </div>
     </template>
 
-    <!-- Wrapper 1: WITH header — external_layout_template_center already draws the
-         full company header itself, so we do NOT add our own header block here. -->
     <template id="report_purchase_request_header">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
@@ -134,6 +154,7 @@
                 </t>
                 <style>
                     .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
+                    .erp-table-header { background-color: #d9d9d9; }
                 </style>
                 <t t-call="report_layout_template.external_layout_template_center">
                     <t t-call="khmer_reports.report_purchase_request_document"/>
@@ -142,8 +163,6 @@
         </t>
     </template>
 
-    <!-- Wrapper 2: NO header — this layout's header is intentionally blank, so we
-         draw our own compact letterhead block before handing off to the document. -->
     <template id="report_purchase_request_no_header">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
@@ -160,6 +179,7 @@
                         .erp-title { font-size: 20px; font-family: Moul; padding-bottom: 3px; font-weight: bold; }
                         .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
                         .erp-title-en { font-size: 18px; }
+                        .erp-table-header { background-color: #d9d9d9; }
                     </style>
                     <div class="row mb8">
                         <div class="col-4 mb2">

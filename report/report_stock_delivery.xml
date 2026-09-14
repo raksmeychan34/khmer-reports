@@ -7,7 +7,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">khmer_reports.report_stock_delivery_header</field>
         <field name="report_file">khmer_reports.report_stock_delivery_header</field>
-        <field name="print_report_name">('Goods Receive Note - %s' if object.picking_type_id.code == 'incoming' else 'Goods Delivery Note - %s' if object.picking_type_id.code == 'outgoing' else 'Goods Delivery-Receive Note - %s') % (object.name)</field>
+        <field name="print_report_name">'Goods Delivery Note - %s' % (object.name)</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
@@ -18,29 +18,16 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">khmer_reports.report_stock_delivery_no_header</field>
         <field name="report_file">khmer_reports.report_stock_delivery_no_header</field>
-        <field name="print_report_name">('Goods Receive Note - %s' if object.picking_type_id.code == 'incoming' else 'Goods Delivery Note - %s' if object.picking_type_id.code == 'outgoing' else 'Goods Delivery-Receive Note - %s') % (object.name)</field>
+        <field name="print_report_name">'Goods Delivery Note - %s' % (object.name)</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
 
-    <!-- Shared content — used by both wrappers below. NOTE: no font-face, no company
-         header block here anymore — that's handled per-wrapper now, since the
-         with-header layout renders its own header and would duplicate it. -->
     <template id="report_stock_delivery_document">
         <div class="page">
             <br/>
-            <t t-if="o.picking_type_id.code == 'outgoing'">
-                <h4 class="text-center"><strong><span>ប័ណ្ណប្រគល់ទំនិញ</span></strong></h4>
-                <h4 class="text-center"><strong><span>GOODS DELIVERY NOTE</span></strong></h4>
-            </t>
-            <t t-elif="o.picking_type_id.code == 'incoming'">
-                <h4 class="text-center"><strong><span>ប័ណ្ណទទួលទំនិញ</span></strong></h4>
-                <h4 class="text-center"><strong><span>GOODS RECEIVE NOTE</span></strong></h4>
-            </t>
-            <t t-else="else">
-                <h4 class="text-center"><strong><span>ប័ណ្ណប្រគល់/ទទួលទំនិញ</span></strong></h4>
-                <h4 class="text-center"><strong><span>GOODS DELIVERY/RECEIVE</span></strong></h4>
-            </t>
+            <h4 class="text-center"><strong><span>ប័ណ្ណប្រគល់ទំនិញ</span></strong></h4>
+            <h4 class="text-center"><strong><span>GOODS DELIVERY NOTE</span></strong></h4>
 
             <div class="row">
                 <div class="col-7">
@@ -87,63 +74,82 @@
                     <t t-foreach="o.move_ids" t-as="line">
                         <tr class="erp-border">
                             <td class="erp-center erp-text erp-border"><t t-esc="line_index + 1"/></td>
-                            <td class="erp-text erp-border"><span t-field="line.product_id.default_code"/></td>
-                            <td class="erp-text erp-border"><span t-field="line.product_id.name"/></td>
-                            <td class="erp-text erp-border"><span t-field="line.description_picking"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_id.default_code"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_id.name"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.description_picking"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_uom"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_uom_qty"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.quantity"/></td>
-                            <td class="erp-right erp-text erp-border"><span t-field="line.sale_line_id.price_unit"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.sale_line_id.price_unit"/></td>
                             <td class="erp-right erp-text erp-border">
                                 <span t-esc="'%.2f' % (line.quantity * line.sale_line_id.price_unit)"/>
                             </td>
                         </tr>
                     </t>
                 </tbody>
-                <tfoot>
-                    <tr class="erp-border">
-                        <th colspan="5" class="text-end erp-text erp-border">Total</th>
-                        <th class="erp-center erp-text erp-border"><span t-esc="sum(l.product_uom_qty for l in o.move_ids)"/></th>
-                        <th class="erp-center erp-text erp-border"><span t-esc="sum(l.quantity for l in o.move_ids)"/></th>
-                        <th class="erp-border"></th>
-                        <th class="erp-right erp-text erp-border">
-                            <span t-esc="sum(l.quantity * l.sale_line_id.price_unit for l in o.move_ids)" t-options="{'widget': 'monetary', 'display_currency': o.company_id.currency_id}"/>
-                        </th>
-                    </tr>
-                </tfoot>
             </table>
 
-            <div class="row" style="margin-top: 60px;">
+            <div class="row" style="margin-top: 20px;">
                 <div class="col-3">
-                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
-                    <div class="erp-text text-center">Prepared by</div>
-                    <div class="erp-text">Name: </div>
-                    <div class="erp-text">Date: </div>
+                    <div class="erp-border" style="padding: 8px; min-height: 130px;">
+                        <div class="erp-text text-center"><strong>Prepared by</strong></div>
+                        <div style="height: 80px;"/>
+                        <div class="erp-text">Name: </div>
+                        <div class="erp-text">Date: </div>
+                    </div>
                 </div>
                 <div class="col-3">
-                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
-                    <div class="erp-text text-center">Checked by</div>
-                    <div class="erp-text">Name: </div>
-                    <div class="erp-text">Date: </div>
+                    <div class="erp-border" style="padding: 8px; min-height: 130px;">
+                        <div class="erp-text text-center"><strong>Checked by</strong></div>
+                        <div style="height: 80px;"/>
+                        <div class="erp-text">Name: </div>
+                        <div class="erp-text">Date: </div>
+                    </div>
                 </div>
                 <div class="col-3">
-                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
-                    <div class="erp-text text-center">Delivered by</div>
-                    <div class="erp-text">Name: </div>
-                    <div class="erp-text">Date: </div>
+                    <div class="erp-border" style="padding: 8px; min-height: 130px;">
+                        <div class="erp-text text-center"><strong>Delivered by</strong></div>
+                        <div style="height: 80px;"/>
+                        <div class="erp-text">Name: </div>
+                        <div class="erp-text">Date: </div>
+                    </div>
                 </div>
                 <div class="col-3">
-                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
-                    <div class="erp-text text-center">Received by</div>
-                    <div class="erp-text">Name: </div>
-                    <div class="erp-text">Date: </div>
+                    <div class="erp-border" style="padding: 8px; min-height: 130px;">
+                        <div class="erp-text text-center"><strong>Received by</strong></div>
+                        <div style="height: 80px;"/>
+                        <div class="erp-text">Name: </div>
+                        <div class="erp-text">Date: </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; border-top: 1px solid black; padding-top: 6px;">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="erp-text"><strong>ADDRESS</strong></div>
+                        <div class="erp-text">
+                            <span t-esc="company.city"/><t t-if="company.city and company.country_id">,</t>
+                            <span t-esc="company.country_id.name"/>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="erp-text"><strong>CONTACT</strong></div>
+                        <div class="erp-text">T. <span t-esc="company.phone"/></div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 8px;">
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/design_build.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/electrical.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/mechanical.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/water_systems.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/fire_security.png" style="width:100%; max-width:70px;"/></div>
+                    <div class="col text-center"><img src="/khmer_reports/static/src/img/maintenance_warranty.png" style="width:100%; max-width:70px;"/></div>
                 </div>
             </div>
         </div>
     </template>
 
-    <!-- Wrapper 1: WITH header — external_layout_template_center already draws the
-         full company header itself, so we do NOT add our own header block here. -->
     <template id="report_stock_delivery_header">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
@@ -157,6 +163,7 @@
                 </t>
                 <style>
                     .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
+                    .erp-table-header { background-color: #d9d9d9; }
                 </style>
                 <t t-call="report_layout_template.external_layout_template_center">
                     <t t-call="khmer_reports.report_stock_delivery_document"/>
@@ -165,8 +172,6 @@
         </t>
     </template>
 
-    <!-- Wrapper 2: NO header — this layout's header is intentionally blank, so we
-         draw our own compact letterhead block before handing off to the document. -->
     <template id="report_stock_delivery_no_header">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
@@ -183,6 +188,7 @@
                         .erp-title { font-size: 20px; font-family: Moul; padding-bottom: 3px; font-weight: bold; }
                         .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
                         .erp-title-en { font-size: 18px; }
+                        .erp-table-header { background-color: #d9d9d9; }
                     </style>
                     <div class="row mb8">
                         <div class="col-4 mb2">
