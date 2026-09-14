@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_purchase_request_khmer_header" model="ir.actions.report">
+        <field name="name">Purchase Request (Khmer - With Header)</field>
+        <field name="model">purchase.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">erp_report_khmer_documents.report_purchase_request_header</field>
+        <field name="report_file">erp_report_khmer_documents.report_purchase_request_header</field>
+        <field name="print_report_name">'Purchase Request - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <record id="action_report_purchase_request_khmer_no_header" model="ir.actions.report">
+        <field name="name">Purchase Request (Khmer - No Header)</field>
+        <field name="model">purchase.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">erp_report_khmer_documents.report_purchase_request_no_header</field>
+        <field name="report_file">erp_report_khmer_documents.report_purchase_request_no_header</field>
+        <field name="print_report_name">'Purchase Request - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="purchase_request.model_purchase_request"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Shared content — written once, used by both wrappers below -->
+    <template id="report_purchase_request_document">
+        <div class="page">
+            <br/>
+            <h4 class="text-center"><strong><span>សំណើសុំទិញ</span></strong></h4>
+            <h4 class="text-center"><strong><span>PURCHASE REQUEST</span></strong></h4>
+
+            <div class="row">
+                <div class="col-7">
+                    <div class="row">
+                        <div class="col-4"><div class="erp-text">PR No.</div></div>
+                        <div class="col-8"><div class="erp-text">: <span t-field="o.name"/></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4"><div class="erp-text">Requester</div></div>
+                        <div class="col-8"><div class="erp-text">: <span t-esc="o.requested_by.name"/></div></div>
+                    </div>
+                    <!-- Project Name / Project Code: not in the purchase.request module, see Part 1 -->
+                </div>
+                <div class="col-5">
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Date</div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.date_start" t-options="{'widget': 'date', 'format': 'yyyy-MM-dd'}"/></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Warehouse</div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.picking_type_id.warehouse_id.name"/></div></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5"><div class="erp-text">Note</div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-field="o.description"/></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-sm o_main_table" name="pr_line_table">
+                <thead>
+                    <tr class="erp-border">
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:5%">No.</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:15%">Item Code</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:22%">Item Name</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:23%">Item Description</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:10%">QTY Request</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:8%">UoM</th>
+                        <th class="text-center erp-text erp-border erp-table-header" style="width:17%">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="o.line_ids" t-as="line">
+                        <tr class="erp-border">
+                            <td class="erp-center erp-text erp-border"><t t-esc="line_index + 1"/></td>
+                            <td class="erp-text erp-border"><span t-field="line.product_id.default_code"/></td>
+                            <td class="erp-text erp-border"><span t-field="line.product_id.name"/></td>
+                            <td class="erp-text erp-border"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_qty"/></td>
+                            <td class="erp-center erp-text erp-border"><span t-field="line.product_uom_id"/></td>
+                            <td class="erp-right erp-text erp-border"><span t-field="line.estimated_cost"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+                <tfoot>
+                    <tr class="erp-border">
+                        <th colspan="6" class="text-end erp-text erp-border">Total</th>
+                        <th class="erp-right erp-text erp-border"><span t-field="o.estimated_cost"/></th>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="row" style="margin-top: 60px;">
+                <div class="col-6">
+                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
+                    <div class="erp-text text-center">Prepared by</div>
+                </div>
+                <div class="col-6">
+                    <div style="border-bottom: 1px solid black; margin-top: 60px; margin-bottom: 5px;"/>
+                    <div class="erp-text text-center">Checked And Approved by</div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Wrapper 1: WITH header -->
+    <template id="report_purchase_request_header">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="display_header" t-value="True"/>
+                <t t-set="display_footer" t-value="True"/>
+                <link rel="stylesheet" href="/erp_report_khmer_documents/static/src/css/erp_external_layout.scss"/>
+                <t t-if="not company">
+                    <t t-if="company_id"><t t-set="company" t-value="company_id"/></t>
+                    <t t-elif="o and 'company_id' in o and o.company_id.sudo()"><t t-set="company" t-value="o.company_id.sudo()"/></t>
+                    <t t-else="else"><t t-set="company" t-value="res_company"/></t>
+                </t>
+                <!-- ⚠️ confirm this template id exists in erp_report_layout -->
+                <t t-call="erp_report_layout.external_layout_erp_cambodia">
+                    <style>
+                        .erp-title { font-size: 20px; font-family: Moul; padding-bottom: 3px; font-weight: bold; }
+                        .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
+                        .erp-title-en { font-size: 18px; }
+                    </style>
+                    <div class="row mb8">
+                        <div class="col-4 mb2">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="max-height: 150px; margin-top:10px;"/>
+                        </div>
+                        <div class="col-8 mb6" style="margin-top:10px;">
+                            <h3 class="mt0 erp-title text-left" t-field="company.khmer_name"/>
+                            <h4 class="mt0 text-left erp-title-en" t-field="company.name"/>
+                        </div>
+                    </div>
+                    <div style="border-bottom: 1px solid black;"/>
+                    <t t-call="erp_report_khmer_documents.report_purchase_request_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- Wrapper 2: NO header -->
+    <template id="report_purchase_request_no_header">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="display_header" t-value="True"/>
+                <t t-set="display_footer" t-value="True"/>
+                <link rel="stylesheet" href="/erp_report_khmer_documents/static/src/css/erp_external_layout.scss"/>
+                <t t-if="not company">
+                    <t t-if="company_id"><t t-set="company" t-value="company_id"/></t>
+                    <t t-elif="o and 'company_id' in o and o.company_id.sudo()"><t t-set="company" t-value="o.company_id.sudo()"/></t>
+                    <t t-else="else"><t t-set="company" t-value="res_company"/></t>
+                </t>
+                <t t-call="erp_report_layout.external_layout_erp_cambodia_no_head">
+                    <style>
+                        .erp-title { font-size: 20px; font-family: Moul; padding-bottom: 3px; font-weight: bold; }
+                        .erp-text { font-size: 12px; font-family: Battambang; padding-bottom: 3px; }
+                        .erp-title-en { font-size: 18px; }
+                    </style>
+                    <div class="row mb8">
+                        <div class="col-4 mb2">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="max-height: 150px; margin-top:10px;"/>
+                        </div>
+                        <div class="col-8 mb6" style="margin-top:10px;">
+                            <h3 class="mt0 erp-title text-left" t-field="company.khmer_name"/>
+                            <h4 class="mt0 text-left erp-title-en" t-field="company.name"/>
+                        </div>
+                    </div>
+                    <div style="border-bottom: 1px solid black;"/>
+                    <t t-call="erp_report_khmer_documents.report_purchase_request_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

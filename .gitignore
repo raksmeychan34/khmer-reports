@@ -1,0 +1,39 @@
+# python bytecode
+__pycache__/
+*.py[co]
+
+# python packaging
+*.egg-info
+build/
+dist/
+*.egg
+.eggs/
+
+# virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE/editor
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# logs and local config
+*.log
+*.pid
+odoo.conf
+
+# env/secrets
+.env
+.env.*
+
+# database dumps
+*.sql
+*.dump
+*.backup
