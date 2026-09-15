@@ -8,7 +8,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">khmer_reports.report_stock_delivery</field>
         <field name="report_file">khmer_reports.report_stock_delivery</field>
-        <field name="print_report_name">'Goods Delivery Note - %s' % (object.name)</field>
+        <field name="print_report_name">('Goods Receive Note - %s' if object.picking_type_id.code == 'incoming' else 'Goods Delivery Note - %s' if object.picking_type_id.code == 'outgoing' else 'Goods Delivery-Receive Note - %s') % (object.name)</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
@@ -16,7 +16,15 @@
     <template id="report_stock_delivery_document">
         <div class="page">
             <br/>
-            <h4 class="erp-doc-title"><span>GOODS DELIVERY/RECEIVE</span></h4>
+            <t t-if="o.picking_type_id.code == 'outgoing'">
+                <h4 class="erp-doc-title"><span>GOODS DELIVERY NOTE</span></h4>
+            </t>
+            <t t-elif="o.picking_type_id.code == 'incoming'">
+                <h4 class="erp-doc-title"><span>GOODS RECEIVE NOTE</span></h4>
+            </t>
+            <t t-else="else">
+                <h4 class="erp-doc-title"><span>GOODS DELIVERY/RECEIVE</span></h4>
+            </t>
 
             <div class="row">
                 <div class="col-7">
@@ -45,7 +53,7 @@
                 </div>
             </div>
 
-            <table class="table table-sm o_main_table erp-border" name="delivery_line_table" style="margin-top:6px;">
+            <table class="table table-sm o_main_table erp-border" name="delivery_line_table" style="margin:6px 0 0 0; border-collapse: collapse;">
                 <thead>
                     <tr class="erp-border">
                         <th class="text-center erp-text erp-border erp-table-header" style="width:5%">No.</th>
@@ -69,8 +77,8 @@
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_uom"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_uom_qty"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.quantity"/></td>
-                            <td class="erp-center erp-text erp-border"><span t-field="line.sale_line_id.price_unit"/></td>
-                            <td class="erp-right erp-text erp-border">
+                            <td class="erp-text erp-border" style="text-align:right;"><span t-field="line.sale_line_id.price_unit"/></td>
+                            <td class="erp-text erp-border" style="text-align:right;">
                                 <span t-esc="'%.2f' % (line.quantity * line.sale_line_id.price_unit)"/>
                             </td>
                         </tr>
@@ -82,19 +90,27 @@
                         <th class="erp-center erp-text erp-border"><span t-esc="sum(l.product_uom_qty for l in o.move_ids)"/></th>
                         <th class="erp-border"></th>
                         <th class="erp-border"></th>
-                        <th class="erp-right erp-text erp-border">
+                        <th class="erp-text erp-border" style="text-align:right;">
                             <span t-esc="'%.2f' % sum(l.quantity * l.sale_line_id.price_unit for l in o.move_ids)"/>
                         </th>
                     </tr>
                 </tfoot>
             </table>
 
-            <table class="table table-sm erp-border" style="margin-top:20px; margin-bottom:0; table-layout:fixed;">
+            <table class="table table-sm erp-border" name="delivery_signature_table" style="margin:16px 0 0 0; table-layout:fixed; border-collapse: collapse;">
                 <tr class="erp-border">
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Prepared by</strong></td>
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Checked by</strong></td>
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Delivered by</strong></td>
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Received by</strong></td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Prepared by</strong></div>
+                    </td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Checked by</strong></div>
+                    </td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Delivered by</strong></div>
+                    </td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Received by</strong></div>
+                    </td>
                 </tr>
                 <tr class="erp-border">
                     <td class="erp-text erp-border">Name: <br/>Date: </td>
@@ -143,38 +159,35 @@
                 </t>
                 <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
                     <style>
-                        .erp-title { font-size: 20px; font-family: 'Moul', 'Khmer OS Muol Light', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
-                        .erp-title-en { font-size: 13px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
-                        .erp-text { font-size: 12px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
+                        .erp-title { font-size: 22px; font-family: 'Moul', serif; font-weight: bold; color: #003399; padding-bottom: 2px; text-align: center; }
+                        .erp-title-en { font-size: 18px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; text-align: center; }
+                        .erp-text { font-size: 14px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
                         .erp-label { font-weight: bold; }
-                        .erp-doc-title { font-size: 16px; font-weight: bold; color: #003399; text-align: center; margin: 6px 0 12px 0; font-family: 'Times New Roman', Battambang, serif; }
-                        .erp-table-header { background-color: #d9d9d9; }
+                        .erp-doc-title { font-size: 18px; font-weight: bold; color: #003399; text-align: center; margin: 0 0 6px 0; font-family: 'Liberation Serif', 'Times New Roman', Battambang, serif; }
+                        .erp-table-header { background-color: #d9d9d9; font-weight: bold; }
                         .erp-footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; }
+                        table[name="delivery_line_table"], table[name="delivery_line_table"] th, table[name="delivery_line_table"] td, table[name="delivery_signature_table"], table[name="delivery_signature_table"] th, table[name="delivery_signature_table"] td { border: 1px solid black; }
                     </style>
-                    <div class="row mb8">
-                        <div class="col-4 mb2">
-                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="height:80px; width:auto; margin-top:8px;"/>
-                        </div>
-                        <div class="col-8 mb6" style="margin-top:10px;">
-                            <h3 class="mt0 erp-title text-left" t-field="company.kh_name"/>
-                            <h4 class="mt0 text-left erp-title-en" t-field="company.name"/>
-                        </div>
+                    <div style="position: relative; margin-bottom: 2px; min-height: 60px;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="position:absolute; left:0; top:0; height:55px; width:auto;"/>
+                        <h3 class="mt0 erp-title" t-field="company.kh_name" style="margin:3;"/>
+                        <h4 class="mt0 erp-title-en" t-field="company.name" style="margin:0;"/>
                     </div>
-                    <div style="border-bottom: 1px solid black;"/>
+                    <div style="border-bottom: 1px solid black; margin-bottom: 2px;"/>
                     <t t-call="khmer_reports.report_stock_delivery_document"/>
                 </t>
             </t>
         </t>
     </template>
 
-        <record id="action_report_stock_delivery_khmer_no_header" model="ir.actions.report">
+    <record id="action_report_stock_delivery_khmer_no_header" model="ir.actions.report">
         <field name="name">Goods Delivery Note (Khmer) - No Header</field>
         <field name="paperformat_id" ref="khmer_reports.paperformat"/>
         <field name="model">stock.picking</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">khmer_reports.report_stock_delivery_no_header</field>
         <field name="report_file">khmer_reports.report_stock_delivery_no_header</field>
-        <field name="print_report_name">'Goods Delivery Note - %s' % (object.name)</field>
+        <field name="print_report_name">('Goods Receive Note - %s' if object.picking_type_id.code == 'incoming' else 'Goods Delivery Note - %s' if object.picking_type_id.code == 'outgoing' else 'Goods Delivery-Receive Note - %s') % (object.name)</field>
         <field name="binding_model_id" ref="stock.model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
@@ -192,13 +205,14 @@
                 </t>
                 <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
                     <style>
-                        .erp-title { font-size: 20px; font-family: 'Moul', 'Khmer OS Muol Light', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
-                        .erp-title-en { font-size: 13px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
-                        .erp-text { font-size: 12px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
+                        .erp-title { font-size: 22px; font-family: 'Moul', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
+                        .erp-title-en { font-size: 18px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
+                        .erp-text { font-size: 14px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
                         .erp-label { font-weight: bold; }
-                        .erp-doc-title { font-size: 16px; font-weight: bold; color: #003399; text-align: center; margin: 6px 0 12px 0; font-family: 'Times New Roman', Battambang, serif; }
-                        .erp-table-header { background-color: #d9d9d9; }
+                        .erp-doc-title { font-size: 18px; font-weight: bold; color: #003399; text-align: center; margin: 0 0 6px 0; font-family: 'Times New Roman', Battambang, serif; }
+                        .erp-table-header { background-color: #d9d9d9; font-weight: bold; }
                         .erp-footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; }
+                        table[name="delivery_line_table"], table[name="delivery_line_table"] th, table[name="delivery_line_table"] td, table[name="delivery_signature_table"], table[name="delivery_signature_table"] th, table[name="delivery_signature_table"] td { border: 1px solid black; }
                     </style>
                     <!-- No logo / company-name block here on purpose — this is the "No Header" variant -->
                     <t t-call="khmer_reports.report_stock_delivery_document"/>
@@ -206,4 +220,5 @@
             </t>
         </t>
     </template>
+
 </odoo>

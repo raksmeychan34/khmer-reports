@@ -29,7 +29,7 @@
                     </div>
                     <div class="row">
                         <div class="col-4"><div class="erp-text erp-label">Attn</div></div>
-                        <div class="col-8"><div class="erp-text">: </div></div>
+                        <div class="col-8"><div class="erp-text">: <span t-esc="o.attn_partner_id.name"/></div></div>
                     </div>
                     <div class="row">
                         <div class="col-4"><div class="erp-text erp-label">Address</div></div>
@@ -55,11 +55,11 @@
                     </div>
                     <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">Project Name</div></div>
-                        <div class="col-7"><div class="erp-text">: </div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.project_id.name"/></div></div>
                     </div>
                     <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">Project Code</div></div>
-                        <div class="col-7"><div class="erp-text">: </div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.project_id.code"/></div></div>
                     </div>
                     <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">VAT No.</div></div>
@@ -71,7 +71,7 @@
                     </div> -->
                     <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">Requester</div></div>
-                        <div class="col-7"><div class="erp-text">: </div></div>
+                        <div class="col-7"><div class="erp-text">: <span t-esc="o.user_id.name"/></div></div>
                     </div>
                 </div>
             </div>

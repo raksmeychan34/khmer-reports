@@ -8,9 +8,11 @@
     "license": "AGPL-3",
     "website": "",
     "category": "Purchase/Localizations and Inventory/Localizations",
-    "depends": ["purchase", "stock", "purchase_request", "report_layout_template"],
+    "depends": ["purchase", "stock", "purchase_request", "report_layout_template", "project"],
     "data": [
         "report/report_paperformat.xml",
+        "views/purchase_order_views.xml",
+        "views/project_project_views.xml",
         'report/report_purchase_request.xml',
         'report/report_purchase_order.xml',
         'report/report_stock_receipt.xml',
