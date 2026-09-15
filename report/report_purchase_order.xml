@@ -15,7 +15,6 @@
 
     <template id="report_purchase_order_document">
         <div class="page">
-            <br/>
             <h4 class="erp-doc-title"><span>PURCHASE ORDER</span></h4>
 
             <div class="row">
@@ -46,10 +45,10 @@
                     </div>
                 </div>
                 <div class="col-6">
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">Quote No.</div></div>
                         <div class="col-7"><div class="erp-text">: <span t-esc="o.partner_ref"/></div></div>
-                    </div>
+                    </div> -->
                     <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">Date</div></div>
                         <div class="col-7"><div class="erp-text">: <span t-esc="o.date_order" t-options="{'widget': 'date', 'format': 'dd-MM-yyyy'}"/></div></div>
@@ -66,10 +65,10 @@
                         <div class="col-5"><div class="erp-text erp-label">VAT No.</div></div>
                         <div class="col-7"><div class="erp-text">: <span t-esc="o.company_id.vat"/></div></div>
                     </div>
-                    <div class="row">
+                    <!-- <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">MR No.</div></div>
                         <div class="col-7"><div class="erp-text">: </div></div>
-                    </div>
+                    </div> -->
                     <div class="row">
                         <div class="col-5"><div class="erp-text erp-label">Requester</div></div>
                         <div class="col-7"><div class="erp-text">: </div></div>
@@ -77,7 +76,7 @@
                 </div>
             </div>
 
-            <table class="table table-sm o_main_table erp-border" name="po_line_table" style="margin-top:6px;">
+            <table class="table table-sm erp-border" name="po_line_table" style="margin:6px 0 0 0; border-collapse: collapse;">
                 <thead>
                     <tr class="erp-border">
                         <th class="text-center erp-text erp-border erp-table-header" style="width:5%">No.</th>
@@ -99,44 +98,50 @@
                             <td class="erp-center erp-text erp-border"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_qty"/></td>
                             <td class="erp-center erp-text erp-border"><span t-field="line.product_uom_id"/></td>
-                            <td class="erp-center erp-text erp-border"><span t-field="line.price_unit"/></td>
-                            <td class="erp-right erp-text erp-border"><span t-field="line.price_subtotal"/></td>
+                            <td class="erp-text erp-border" style="text-align:right;"><span t-field="line.price_unit"/></td>
+                            <td class="erp-text erp-border" style="text-align:right;"><span t-field="line.price_subtotal"/></td>
                         </tr>
                     </t>
                 </tbody>
             </table>
 
-            <table class="table table-sm erp-border" style="margin-top:0; margin-bottom:0; table-layout:fixed;">
+            <table class="table table-sm erp-border" name="po_amount_table" style="margin:-1px 0 0 0; table-layout:fixed; border-collapse: collapse;">
                 <colgroup>
-                    <col style="width:60%"/>
+                    <col style="width:66%"/>
                     <col style="width:20%"/>
-                    <col style="width:20%"/>
+                    <col style="width:14%"/>
                 </colgroup>
                 <tr class="erp-border">
                     <td class="erp-text erp-border" style="vertical-align:top;" rowspan="3">
                         <span class="erp-label">Amount in word:</span>
                         <span t-esc="o.currency_id.amount_to_text(o.amount_total)"/>
                     </td>
-                    <td class="erp-text erp-border erp-label">Total Amount</td>
-                    <td class="erp-text erp-border erp-right"><span t-field="o.amount_total"/></td>
+                    <td class="erp-text erp-border erp-label" style="text-align:right;">Total Amount</td>
+                    <td class="erp-text erp-border" style="text-align:right; font-weight:bold;"><span t-field="o.amount_total"/></td>
                 </tr>
                 <tr class="erp-border">
-                    <td class="erp-text erp-border erp-label">Discount</td>
-                    <td class="erp-text erp-border erp-right">
+                    <td class="erp-text erp-border erp-label" style="text-align:right;">Discount</td>
+                    <td class="erp-text erp-border" style="text-align:right; font-weight:bold;">
                         <span t-esc="0.0" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                     </td>
                 </tr>
                 <tr class="erp-border">
-                    <td class="erp-text erp-border erp-label">PO Amount</td>
-                    <td class="erp-text erp-border erp-right"><span t-field="o.amount_total"/></td>
+                    <td class="erp-text erp-border erp-label" style="text-align:right;">PO Amount</td>
+                    <td class="erp-text erp-border" style="text-align:right; font-weight:bold;"><span t-field="o.amount_total"/></td>
                 </tr>
             </table>
 
-            <table class="table table-sm erp-border" style="margin-top:20px; margin-bottom:0; table-layout:fixed;">
+            <table class="table table-sm erp-border" style="margin:16px 0 0 0; table-layout:fixed; border-collapse: collapse;">
                 <tr class="erp-border">
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Prepared by</strong></td>
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Checked by</strong></td>
-                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;"><strong>Approved by</strong></td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Prepared by</strong></div>
+                    </td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Checked by</strong></div>
+                    </td>
+                    <td class="erp-text erp-border text-center" style="height:80px; vertical-align:top;">
+                        <div style="display:inline-block; border-bottom:1px solid black; padding:0 12px 3px 12px;"><strong>Approved by</strong></div>
+                    </td>
                 </tr>
                 <tr class="erp-border">
                     <td class="erp-text erp-border">Name: <span t-esc="o.user_id.name"/><br/>Date: <span t-esc="o.date_order" t-options="{'widget': 'date', 'format': 'dd-MM-yyyy'}"/></td>
@@ -184,24 +189,62 @@
                 </t>
                 <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
                     <style>
-                        .erp-title { font-size: 22px; font-family: 'Moul', 'Khmer OS Muol Light', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
-                        .erp-title-en { font-size: 13px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
-                        .erp-text { font-size: 10px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
+                        .erp-title { font-size: 22px; font-family: 'Moul', serif; font-weight: bold; color: #003399; padding-bottom: 2px; text-align: center; }
+                        .erp-title-en { font-size: 18px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; text-align: center; }
+                        .erp-text { font-size: 14px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
                         .erp-label { font-weight: bold; }
-                        .erp-doc-title { font-size: 16px; font-weight: bold; color: #003399; text-align: center; margin: 6px 0 12px 0; font-family: 'Times New Roman', Battambang, serif; }
-                        .erp-table-header { background-color: #d9d9d9; }
+                        .erp-doc-title { font-size: 18px; font-weight: bold; color: #003399; text-align: center; margin: 0 0 6px 0; font-family: 'Liberation Serif', 'Times New Roman', Battambang, serif; }
+                        .erp-table-header { background-color: #d9d9d9; font-weight: bold; }
                         .erp-footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; }
+                        table[name="po_line_table"], table[name="po_line_table"] th, table[name="po_line_table"] td, table[name="po_amount_table"], table[name="po_amount_table"] th, table[name="po_amount_table"] td { border: 1px solid black; }
                     </style>
-                    <div class="row mb8">
-                        <div class="col-4 mb2">
-                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="height:80px; width:auto; margin-top:8px;"/>
-                        </div>
-                        <div class="col-8 mb6" style="margin-top:10px;">
-                            <h3 class="mt0 erp-title text-left" t-field="company.kh_name"/>
-                            <h4 class="mt0 text-left erp-title-en" t-field="company.name"/>
-                        </div>
+                    <div style="position: relative; margin-bottom: 2px; min-height: 60px;">
+                        <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" style="position:absolute; left:0; top:0; height:55px; width:auto;"/>
+                        <h3 class="mt0 erp-title" t-field="company.kh_name" style="margin:3;"/>
+                        <h4 class="mt0 erp-title-en" t-field="company.name" style="margin:0;"/>
                     </div>
-                    <div style="border-bottom: 1px solid black;"/>
+                    <div style="border-bottom: 1px solid black; margin-bottom: 2px;"/>
+                    <t t-call="khmer_reports.report_purchase_order_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_report_purchase_order_khmer_no_header" model="ir.actions.report">
+        <field name="name">Purchase Order (Khmer) - No Header</field>
+        <field name="paperformat_id" ref="khmer_reports.paperformat"/>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">khmer_reports.report_purchase_order_no_header</field>
+        <field name="report_file">khmer_reports.report_purchase_order_no_header</field>
+        <field name="print_report_name">'Purchase Order - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_purchase_order_no_header">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="display_header" t-value="True"/>
+                <t t-set="display_footer" t-value="True"/>
+                <link rel="stylesheet" href="/report_layout_template/static/src/css/font.css"/>
+                <t t-if="not company">
+                    <t t-if="company_id"><t t-set="company" t-value="company_id"/></t>
+                    <t t-elif="o and 'company_id' in o and o.company_id.sudo()"><t t-set="company" t-value="o.company_id.sudo()"/></t>
+                    <t t-else="else"><t t-set="company" t-value="res_company"/></t>
+                </t>
+                <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
+                    <style>
+                        .erp-title { font-size: 22px; font-family: 'Moul', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
+                        .erp-title-en { font-size: 18px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
+                        .erp-text { font-size: 14px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
+                        .erp-label { font-weight: bold; }
+                        .erp-doc-title { font-size: 18px; font-weight: bold; color: #003399; text-align: center; margin: 0 0 6px 0; font-family: 'Times New Roman', Battambang, serif; }
+                        .erp-table-header { background-color: #d9d9d9; font-weight: bold; }
+                        .erp-footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; }
+                        table[name="po_line_table"], table[name="po_line_table"] th, table[name="po_line_table"] td, table[name="po_amount_table"], table[name="po_amount_table"] th, table[name="po_amount_table"] td { border: 1px solid black; }
+                    </style>
+                    <!-- No logo / company-name block here on purpose — this is the "No Header" variant -->
                     <t t-call="khmer_reports.report_purchase_order_document"/>
                 </t>
             </t>

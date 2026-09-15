@@ -142,9 +142,9 @@
                 </t>
                 <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
                     <style>
-                        .erp-title { font-size: 22px; font-family: 'Moul', 'Khmer OS Muol Light', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
+                        .erp-title { font-size: 20px; font-family: 'Moul', 'Khmer OS Muol Light', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
                         .erp-title-en { font-size: 13px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
-                        .erp-text { font-size: 10px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
+                        .erp-text { font-size: 12px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
                         .erp-label { font-weight: bold; }
                         .erp-doc-title { font-size: 16px; font-weight: bold; color: #003399; text-align: center; margin: 6px 0 12px 0; font-family: 'Times New Roman', Battambang, serif; }
                         .erp-table-header { background-color: #d9d9d9; }
@@ -166,4 +166,43 @@
         </t>
     </template>
 
+        <record id="action_report_stock_receipt_khmer_no_header" model="ir.actions.report">
+        <field name="name">Goods Receive Note (Khmer) - No Header</field>
+        <field name="paperformat_id" ref="khmer_reports.paperformat"/>
+        <field name="model">stock.picking</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">khmer_reports.report_stock_receipt_no_header</field>
+        <field name="report_file">khmer_reports.report_stock_receipt_no_header</field>
+        <field name="print_report_name">'Goods Receive Note - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_stock_receipt_no_header">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="display_header" t-value="True"/>
+                <t t-set="display_footer" t-value="True"/>
+                <link rel="stylesheet" href="/report_layout_template/static/src/css/font.css"/>
+                <t t-if="not company">
+                    <t t-if="company_id"><t t-set="company" t-value="company_id"/></t>
+                    <t t-elif="o and 'company_id' in o and o.company_id.sudo()"><t t-set="company" t-value="o.company_id.sudo()"/></t>
+                    <t t-else="else"><t t-set="company" t-value="res_company"/></t>
+                </t>
+                <t t-call="report_layout_template.external_layout_erp_cambodia_no_head">
+                    <style>
+                        .erp-title { font-size: 20px; font-family: 'Moul', 'Khmer OS Muol Light', serif; font-weight: bold; color: #003399; padding-bottom: 2px; }
+                        .erp-title-en { font-size: 13px; font-family: 'Times New Roman', Battambang, serif; color: #003399; letter-spacing: 3px; }
+                        .erp-text { font-size: 12px; font-family: 'Times New Roman', Battambang, serif; padding-bottom: 2px; }
+                        .erp-label { font-weight: bold; }
+                        .erp-doc-title { font-size: 16px; font-weight: bold; color: #003399; text-align: center; margin: 6px 0 12px 0; font-family: 'Times New Roman', Battambang, serif; }
+                        .erp-table-header { background-color: #d9d9d9; }
+                        .erp-footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; }
+                    </style>
+                    <!-- No logo / company-name block here on purpose — this is the "No Header" variant -->
+                    <t t-call="khmer_reports.report_stock_receipt_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
 </odoo>
