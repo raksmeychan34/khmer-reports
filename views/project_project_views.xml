@@ -5,12 +5,9 @@
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
-         <!-- <xpath expr="//sheet/field[@name=label_tasks']" position="after">
-                <field name="code"/>
-            </xpath> -->
-            <field name="name" position="after">
-                <field name="code"/>
-            </field>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="code" string="Project Code"/>
+            </xpath>
         </field>
     </record>
 </odoo>
